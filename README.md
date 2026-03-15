@@ -33,3 +33,5 @@ Puntos clave de cumplimiento:
 - Cobertura de pruebas para logica central con comportamiento determinista.
 - Presupuesto de rendimiento y estabilidad en interacciones.
 - Simplicidad estructural y bajo acoplamiento entre logica y renderizado.
+
+## Test
