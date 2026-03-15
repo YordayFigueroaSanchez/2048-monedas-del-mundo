@@ -4,10 +4,13 @@ coverage/
 venv/
 __pycache__/
 *.pyc
+*.egg-info/
 *.log
 dist/
 build/
+.env*
 .DS_Store
 Thumbs.db
 *.tmp
 *.swp
+.idea/

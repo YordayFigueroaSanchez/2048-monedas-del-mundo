@@ -28,3 +28,19 @@ Verificar que el juego transmite visualmente el desplazamiento y la fusion de fi
 1. Jugar una sesion continua de 3 minutos.
 2. Confirmar que el input no produce estados visuales superpuestos.
 3. Confirmar que no hay parpadeos ni bloqueos visibles del tablero.
+
+## Escenario E: Nueva ficha con ruleta
+1. Ejecutar una jugada valida que genere nueva ficha.
+2. Confirmar que la nueva ficha aparece primero sin simbolo/codigo de moneda.
+3. Confirmar que se ve una ruleta breve antes de la moneda final.
+4. Confirmar que la moneda final coincide con el valor real de la nueva ficha.
+
+## Escenario F: Ruleta no aparece en jugada invalida
+1. Preparar una direccion sin cambios posibles.
+2. Pulsar la flecha correspondiente.
+3. Confirmar que no se muestra ruleta de aparicion.
+
+## Escenario G: Reduced Motion
+1. Activar preferencia del sistema para reducir movimiento.
+2. Ejecutar jugadas validas con aparicion de nueva ficha.
+3. Confirmar que la fase de ruleta se resuelve de forma inmediata o minimizada.

@@ -16,6 +16,34 @@
         };
     }
 
+    function hashMoveId(moveId) {
+        var text = String(moveId || "move-0");
+        var hash = 0;
+        var index;
+
+        for (index = 0; index < text.length; index += 1) {
+            hash = (hash * 31 + text.charCodeAt(index)) >>> 0;
+        }
+
+        return hash;
+    }
+
+    function buildSpawnRouletteSequence(spawnValue, moveId) {
+        var pool = [2, 4, 8, 16, 32, 64, 128, 256];
+        var steps = 6;
+        var seed = hashMoveId(moveId) % pool.length;
+        var sequence = [];
+        var offset;
+
+        for (offset = 0; offset < steps; offset += 1) {
+            sequence.push(pool[(seed + offset) % pool.length]);
+        }
+
+        sequence.push(spawnValue);
+
+        return sequence;
+    }
+
     function buildBoardShell(boardEl, size) {
         boardEl.innerHTML = "";
 
@@ -118,6 +146,81 @@
         });
     }
 
+    function renderSpawnRoulette(options) {
+        var boardEl = options.boardEl;
+        var currencies = options.currencies;
+        var event = options.event;
+        var onComplete = options.onComplete;
+        var cell;
+        var tile;
+        var symbolEl;
+        var codeEl;
+        var sequence;
+        var stepDelay;
+        var stepIndex = 0;
+        var intervalId;
+
+        if (!event) {
+            if (typeof onComplete === "function") {
+                onComplete();
+            }
+            return;
+        }
+
+        cell = boardEl.querySelector(".cell[data-row='" + event.row + "'][data-column='" + event.column + "']");
+
+        if (!cell) {
+            if (typeof onComplete === "function") {
+                onComplete();
+            }
+            return;
+        }
+
+        tile = createTileNode(event.value, currencies, "static-tile spawn-roulette");
+        symbolEl = tile.querySelector(".symbol");
+        codeEl = tile.querySelector(".code");
+        symbolEl.textContent = "";
+        codeEl.textContent = "";
+        cell.appendChild(tile);
+
+        if (event.reducedMotion || event.durationMs <= 0) {
+            tile.classList.remove("spawn-roulette");
+            tile.classList.add("roulette-resolved");
+            window.setTimeout(function () {
+                if (typeof onComplete === "function") {
+                    onComplete();
+                }
+            }, 16);
+            return;
+        }
+
+        sequence = buildSpawnRouletteSequence(event.value, event.moveId);
+        stepDelay = Math.max(30, Math.floor(event.durationMs / sequence.length));
+
+        intervalId = window.setInterval(function () {
+            var info;
+
+            if (stepIndex >= sequence.length) {
+                window.clearInterval(intervalId);
+                tile.classList.remove("spawn-roulette");
+                tile.classList.add("roulette-resolved");
+
+                window.setTimeout(function () {
+                    if (typeof onComplete === "function") {
+                        onComplete();
+                    }
+                }, 40);
+
+                return;
+            }
+
+            info = getCurrencyInfo(currencies, sequence[stepIndex]);
+            symbolEl.textContent = info.symbol;
+            codeEl.textContent = info.code;
+            stepIndex += 1;
+        }, stepDelay);
+    }
+
     function renderAnimatedMove(options) {
         var boardEl = options.boardEl;
         var finalBoard = options.finalBoard;
@@ -126,6 +229,8 @@
         var mergedPositions = options.mergedPositions || [];
         var newPosition = options.newPosition;
         var durationMs = options.durationMs || 300;
+        var spawnRoulette = options.spawnRoulette || null;
+        var onMoveComplete = options.onMoveComplete;
         var onComplete = options.onComplete;
         var cellMap;
         var hiddenTargets = {};
@@ -189,6 +294,40 @@
         });
 
         window.setTimeout(function () {
+            if (typeof onMoveComplete === "function") {
+                onMoveComplete();
+            }
+
+            if (spawnRoulette) {
+                renderBoard({
+                    boardEl: boardEl,
+                    board: finalBoard,
+                    currencies: currencies,
+                    newPosition: null,
+                    mergedPositions: mergedPositions
+                });
+
+                renderSpawnRoulette({
+                    boardEl: boardEl,
+                    currencies: currencies,
+                    event: spawnRoulette,
+                    onComplete: function () {
+                        renderBoard({
+                            boardEl: boardEl,
+                            board: finalBoard,
+                            currencies: currencies,
+                            newPosition: null,
+                            mergedPositions: []
+                        });
+
+                        if (typeof onComplete === "function") {
+                            onComplete();
+                        }
+                    }
+                });
+                return;
+            }
+
             renderBoard({
                 boardEl: boardEl,
                 board: finalBoard,
@@ -204,6 +343,7 @@
     }
 
     return {
+        buildSpawnRouletteSequence: buildSpawnRouletteSequence,
         renderAnimatedMove: renderAnimatedMove,
         renderBoard: renderBoard
     };

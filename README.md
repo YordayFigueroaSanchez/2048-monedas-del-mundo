@@ -10,16 +10,18 @@ Proyecto de juego 2048 en navegador con tematica de monedas internacionales.
 
 ## Feature actual
 
-La rama de trabajo actual incorpora una canalizacion modular para animar el desplazamiento
-de fichas y diferenciar visualmente las fusiones sin alterar las reglas del 2048.
+La rama de trabajo actual incorpora dos mejoras visuales sin alterar reglas del 2048:
+
+- Animacion de desplazamiento de fichas con fase de movimiento visible.
+- Aparicion de nueva ficha con ruleta visual (sin moneda inicial) y resolucion final coherente con el valor real.
 
 Estructura tecnica de la feature:
 
-- `src/game-state.js`: reglas de movimiento, fusion, score y deteccion de estados.
-- `src/animation-state.js`: bloqueo de input y metadatos de transicion visual.
-- `src/board-renderer.js`: render estatico y render animado en dos fases.
-- `tests/unit/`: pruebas deterministas para logica y animacion.
-- `tests/integration/keyboard-move-animation.md`: validacion manual de la experiencia.
+- `src/game-state.js`: reglas de movimiento, fusion, score y metadatos de spawn.
+- `src/animation-state.js`: bloqueo de input, fases `moving/spawning` y eventos de ruleta.
+- `src/board-renderer.js`: render estatico, render animado y overlay de ruleta determinista por `moveId`.
+- `tests/unit/`: pruebas deterministas para logica, fases de animacion y ruleta.
+- `tests/integration/keyboard-move-animation.md`: validacion manual de desplazamiento, fusion y ruleta.
 
 ## Guia de gobernanza
 
@@ -34,4 +36,7 @@ Puntos clave de cumplimiento:
 - Presupuesto de rendimiento y estabilidad en interacciones.
 - Simplicidad estructural y bajo acoplamiento entre logica y renderizado.
 
-## Test
+## Tests
+
+- Ejecutar `npm test` para validar reglas de juego, estado de animacion y ruleta de spawn.
+- Ejecutar la validacion manual guiada en `tests/integration/keyboard-move-animation.md`.

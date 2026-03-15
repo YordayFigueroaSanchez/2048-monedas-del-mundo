@@ -48,6 +48,7 @@ test("applyPlayerMove agrega una ficha nueva usando un random determinista", fun
     assert.deepEqual(result.board[0], [2, 0, 0, 2]);
     assert.deepEqual(result.spawnPosition, { row: 0, column: 0 });
     assert.equal(result.spawnValue, 2);
+    assert.deepEqual(result.spawnMeta, { row: 0, column: 0, value: 2 });
 });
 
 test("hasAvailableMoves detecta tableros sin movimientos disponibles", function () {
