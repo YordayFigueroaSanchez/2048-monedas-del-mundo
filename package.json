@@ -4,6 +4,6 @@
   "private": true,
   "description": "Juego 2048 en navegador con monedas del mundo y animaciones de desplazamiento.",
   "scripts": {
-    "test": "node --test tests/unit/game-state.test.js tests/unit/animation-state.test.js"
+    "test": "node --test tests/unit/game-state.test.js tests/unit/animation-state.test.js tests/unit/spawn-roulette.test.js"
   }
 }

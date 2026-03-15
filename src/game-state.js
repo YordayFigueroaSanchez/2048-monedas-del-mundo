@@ -237,7 +237,12 @@
             transitions: moveResult.transitions,
             mergedPositions: moveResult.mergedPositions,
             spawnPosition: spawnResult.position,
-            spawnValue: spawnResult.value
+            spawnValue: spawnResult.value,
+            spawnMeta: spawnResult.position ? {
+                row: spawnResult.position.row,
+                column: spawnResult.position.column,
+                value: spawnResult.value
+            } : null
         };
     }
 
